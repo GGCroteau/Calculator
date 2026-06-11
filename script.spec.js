@@ -70,11 +70,11 @@ describe('operate', () => {
   });
 
   test('operate a multiplication', () => {
-    expect(calculator.operate(2, "*", 4)).toBe(8);
+      expect(calculator.operate(2, "×", 4)).toBe(8);
   });
 
   test('operate a division', () => {
-    expect(calculator.operate(2, "/", 4)).toBe(0.5);
+      expect(calculator.operate(2, "÷", 4)).toBe(0.5);
   });
 });
 
