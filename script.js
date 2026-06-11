@@ -1,11 +1,15 @@
-//Global constants
+//////////Global//////////
 const display = document.querySelector("#display");
 const operators = ["+", "-", "÷", "×"];
 let Equation = {
     value1: "",
     operator: "",
-    value2: ""
+    value2: "",
+    displayEquation: function(){
+        console.log(`value1:${this.value1}, operator:${this.operator}, value2:${this.value2}`)
+    }
 }
+//////////////////////////
 
 function add(val1, val2) {
     return val1+val2;
@@ -48,6 +52,19 @@ function clearDisplay(){
 
 function deleteLast(){
     display.innerText = display.innerText.slice(0, -1);
+
+    //Make the same change to the Equation object. The parameter that is not empty must be updated.
+    if (Equation.value2 != "") {
+        Equation.value2 = Equation.value2.slice(0, -1);
+    }
+    else if (Equation.operator != "") {
+        Equation.operator = Equation.operator.slice(0, -1);
+    }
+    else if (Equation.value1 != "") {
+        Equation.value1 = Equation.value1.slice(0, -1);
+    }
+    Equation.displayEquation();
+    //Update the display to always have at least 0 if it should be empty.
     if (display.innerText == "")
         display.innerText = "0";
 }
@@ -82,13 +99,22 @@ function writeOperator(operator){
 }
 
 function resolveEquation() {
-    const result = operate(Equation.value1, Equation.operator, Equation.value2);
+    //Do the operate with the unary + to convert string to numeric. 
+    const result = String(operate(+Equation.value1, Equation.operator, +Equation.value2));
     display.innerText = result;
 
     //Since the equation is resolved, update the Equation object to only have Value1 equal our result.
     Equation.value1 = result;
     Equation.operator = "";
     Equation.value2 = "";
+}
+
+function addComma() {
+
+}
+
+function changeSign() {
+
 }
 
 function initialisation(){
@@ -119,6 +145,12 @@ function initialisation(){
 
     const btnEqual = document.querySelector("#equal");
     btnEqual.onclick = resolveEquation;
+
+    const btnComma = document.querySelector("#comma");
+    btnComma.onclick = addComma;
+
+    const btnPlusMinus = document.querySelector("#plus-minus");
+    btnPlusMinus.onclick = changeSign;
 }
 
 initialisation();
