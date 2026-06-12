@@ -2,7 +2,7 @@
 const display = document.querySelector("#display");
 const operators = ["+", "-", "÷", "×"];
 let Equation = {
-    value1: "",
+    value1: "0",
     operator: "",
     value2: "",
     displayEquation: function () {
@@ -73,16 +73,13 @@ function deleteLast() {
 }
 
 function writeNumber(number) {
-    if (display.innerText == 0)
-        display.innerText = number;
-    else
-        display.innerText += number;
-
     // update Equation object
     if (Equation.operator === "")
         Equation.value1 += number;
     else
         Equation.value2 += number;
+
+    updateDisplayWithEquation();
 }
 
 function replaceAt(str, index, replacement) {
@@ -94,16 +91,9 @@ function writeOperator(operator) {
     //But if all the elements of the equation are present, then resolve the equation and add the new operator after.
     if (Equation.operator != "" && Equation.value2 != "") {
         resolveEquation();
-        display.innerText += operator;
-    }
-    else if (Equation.operator != "") {
-        const index = display.innerText.lastIndexOf(Equation.operator);
-        display.innerText = replaceAt(display.innerText, index, operator);
-    }
-    else {
-        display.innerText += operator;
     }
     Equation.operator = operator;
+    updateDisplayWithEquation();
 }
 
 function resolveEquation() {
@@ -119,20 +109,22 @@ function resolveEquation() {
     Equation.value2 = "";
 }
 
-//function addComma() {
-//    if (Equation.operator != "" && Equation.value2 != "") {
-//        Equation.value2 += ".";
-//        display.innerText += ".";
-//    }
-//    else if (Equation.operator != "" && Equation.value2 == "") {
-//        Equation.value2 += "0.";
-//        display.innerText += "0.";
-//    }
-//    else{
-//        Equation.value1 += ".";
-//        display.innerText += ".";
-//    }
-//}
+function addComma() {
+    if (Equation.operator != "") {
+        if (Equation.value2 != "" && !Equation.value2.includes('.'))
+            Equation.value2 += ".";        
+        else if (Equation.value2 == "")
+            Equation.value2 += "0.";
+    }
+    else{
+        if (Equation.value1 != "" && !Equation.value1.includes('.'))
+            Equation.value1 += ".";
+        else if (Equation.value1 == "")
+            Equation.value1 += "0.";     
+    }
+
+    updateDisplayWithEquation();
+}
 
 function changeSign() {
     //When operator is not empty, toggle the negative sign on value2, else do it on value1.
@@ -150,6 +142,10 @@ function changeSign() {
             Equation.value1 = Equation.value1.slice(1);
     }
 
+    updateDisplayWithEquation();
+}
+
+function updateDisplayWithEquation() {
     display.innerText = Equation.value1 + Equation.operator + Equation.value2;
 }
 
@@ -166,7 +162,6 @@ function initialisation() {
         btn9.onclick = () => writeNumber(i);
     }
 
-
     const btnDivide = document.querySelector("#divide");
     btnDivide.onclick = () => writeOperator("÷");
 
@@ -182,8 +177,8 @@ function initialisation() {
     const btnEqual = document.querySelector("#equal");
     btnEqual.onclick = resolveEquation;
 
-    //const btnComma = document.querySelector("#comma");
-    //btnComma.onclick = addComma;
+    const btnComma = document.querySelector("#comma");
+    btnComma.onclick = addComma;
 
     const btnPlusMinus = document.querySelector("#plus-minus");
     btnPlusMinus.onclick = changeSign;
