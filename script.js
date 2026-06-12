@@ -5,7 +5,7 @@ let Equation = {
     value1: "",
     operator: "",
     value2: "",
-    displayEquation: function(){
+    displayEquation: function () {
         console.log(`value1:${this.value1}, operator:${this.operator}, value2:${this.value2}`)
     },
     isComplete: function () {
@@ -15,45 +15,45 @@ let Equation = {
 //////////////////////////
 
 function add(val1, val2) {
-    return val1+val2;
+    return val1 + val2;
 }
 
-function subtract(val1, val2){
-    return val1-val2;
+function subtract(val1, val2) {
+    return val1 - val2;
 }
 
-function multiply(val1, val2){
-    return val1*val2;
+function multiply(val1, val2) {
+    return val1 * val2;
 }
 
-function divide(val1, val2){
-    return val1/val2;
+function divide(val1, val2) {
+    return val1 / val2;
 }
 
-function operate(number1, operator, number2){
-    if(operator === '+')
-        return add(number1,number2);
-    else if(operator === '-')
-        return subtract(number1,number2);
+function operate(number1, operator, number2) {
+    if (operator === '+')
+        return add(number1, number2);
+    else if (operator === '-')
+        return subtract(number1, number2);
     else if (operator === '×')
-        return multiply(number1,number2);
+        return multiply(number1, number2);
     else if (operator === '÷')
-        return divide(number1,number2);
-    else{
+        return divide(number1, number2);
+    else {
         alert("operator not recognised");
         return 0;
-    }        
+    }
 }
 
-function clearDisplay(){
+function clearDisplay() {
     display.innerText = "0";
 
-    Equation.value1 = "";
+    Equation.value1 = "0";
     Equation.operator = "";
     Equation.value2 = "";
 }
 
-function deleteLast(){
+function deleteLast() {
     display.innerText = display.innerText.slice(0, -1);
 
     //Make the same change to the Equation object. The parameter that is not empty must be updated.
@@ -76,7 +76,7 @@ function writeNumber(number) {
     if (display.innerText == 0)
         display.innerText = number;
     else
-        display.innerText += number; 
+        display.innerText += number;
 
     // update Equation object
     if (Equation.operator === "")
@@ -89,17 +89,17 @@ function replaceAt(str, index, replacement) {
     return str.slice(0, index) + replacement + str.slice(index + 1);
 }
 
-function writeOperator(operator){
+function writeOperator(operator) {
     //If there is already an operator in the display, replace it.
     //But if all the elements of the equation are present, then resolve the equation and add the new operator after.
     if (Equation.operator != "" && Equation.value2 != "") {
         resolveEquation();
         display.innerText += operator;
-    } 
+    }
     else if (Equation.operator != "") {
         const index = display.innerText.lastIndexOf(Equation.operator);
         display.innerText = replaceAt(display.innerText, index, operator);
-    }      
+    }
     else {
         display.innerText += operator;
     }
@@ -110,7 +110,7 @@ function resolveEquation() {
     if (!Equation.isComplete())
         return;
     //Do the operate with the unary + to convert string to numeric. 
-    const result = String(operate(+Equation.value1, Equation.operator, +Equation.value2));
+    const result = Math.round(operate(+Equation.value1, Equation.operator, +Equation.value2) * 1000000000000000) / 1000000000000000;
     display.innerText = result;
 
     //Since the equation is resolved, update the Equation object to only have Value1 equal our result.
@@ -135,10 +135,25 @@ function resolveEquation() {
 //}
 
 function changeSign() {
+    //When operator is not empty, toggle the negative sign on value2, else do it on value1.
+    //Update the display with the new Equation.
+    if (Equation.operator != "") {
+        if (!Equation.value2.includes('-'))
+            Equation.value2 = "-" + Equation.value2;
+        else
+            Equation.value2 = Equation.value2.slice(1);
+    }
+    else {
+        if (!Equation.value1.includes('-')) 
+            Equation.value1 = "-" + Equation.value1;
+        else if (Equation.value1.includes('-'))
+            Equation.value1 = Equation.value1.slice(1);
+    }
 
+    display.innerText = Equation.value1 + Equation.operator + Equation.value2;
 }
 
-function initialisation(){
+function initialisation() {
     const btnClear = document.querySelector("#clear");
     btnClear.onclick = clearDisplay;
 
@@ -149,9 +164,9 @@ function initialisation(){
     for (let i = 0; i <= 9; i++) {
         const btn9 = document.querySelector(`#nb-${i}`);
         btn9.onclick = () => writeNumber(i);
-    } 
+    }
 
-    
+
     const btnDivide = document.querySelector("#divide");
     btnDivide.onclick = () => writeOperator("÷");
 
@@ -170,8 +185,8 @@ function initialisation(){
     //const btnComma = document.querySelector("#comma");
     //btnComma.onclick = addComma;
 
-    //const btnPlusMinus = document.querySelector("#plus-minus");
-    //btnPlusMinus.onclick = changeSign;
+    const btnPlusMinus = document.querySelector("#plus-minus");
+    btnPlusMinus.onclick = changeSign;
 }
 
 initialisation();
