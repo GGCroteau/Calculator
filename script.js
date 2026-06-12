@@ -7,6 +7,9 @@ let Equation = {
     value2: "",
     displayEquation: function(){
         console.log(`value1:${this.value1}, operator:${this.operator}, value2:${this.value2}`)
+    },
+    isComplete: function () {
+        return this.value1 != "" && this.operator != "" && this.value2 != "";
     }
 }
 //////////////////////////
@@ -88,8 +91,13 @@ function replaceAt(str, index, replacement) {
 
 function writeOperator(operator){
     //If there is already an operator in the display, replace it.
-    if (Equation.operator != "") {
-        const index = display.innerText.indexOf(Equation.operator);
+    //But if all the elements of the equation are present, then resolve the equation and add the new operator after.
+    if (Equation.operator != "" && Equation.value2 != "") {
+        resolveEquation();
+        display.innerText += operator;
+    } 
+    else if (Equation.operator != "") {
+        const index = display.innerText.lastIndexOf(Equation.operator);
         display.innerText = replaceAt(display.innerText, index, operator);
     }      
     else {
@@ -99,6 +107,8 @@ function writeOperator(operator){
 }
 
 function resolveEquation() {
+    if (!Equation.isComplete())
+        return;
     //Do the operate with the unary + to convert string to numeric. 
     const result = String(operate(+Equation.value1, Equation.operator, +Equation.value2));
     display.innerText = result;
@@ -109,9 +119,20 @@ function resolveEquation() {
     Equation.value2 = "";
 }
 
-function addComma() {
-
-}
+//function addComma() {
+//    if (Equation.operator != "" && Equation.value2 != "") {
+//        Equation.value2 += ".";
+//        display.innerText += ".";
+//    }
+//    else if (Equation.operator != "" && Equation.value2 == "") {
+//        Equation.value2 += "0.";
+//        display.innerText += "0.";
+//    }
+//    else{
+//        Equation.value1 += ".";
+//        display.innerText += ".";
+//    }
+//}
 
 function changeSign() {
 
@@ -146,11 +167,11 @@ function initialisation(){
     const btnEqual = document.querySelector("#equal");
     btnEqual.onclick = resolveEquation;
 
-    const btnComma = document.querySelector("#comma");
-    btnComma.onclick = addComma;
+    //const btnComma = document.querySelector("#comma");
+    //btnComma.onclick = addComma;
 
-    const btnPlusMinus = document.querySelector("#plus-minus");
-    btnPlusMinus.onclick = changeSign;
+    //const btnPlusMinus = document.querySelector("#plus-minus");
+    //btnPlusMinus.onclick = changeSign;
 }
 
 initialisation();
